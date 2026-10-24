@@ -1,10 +1,11 @@
 @echo off
-title MIK-JARVIS - MODO IRON MAN (Activacion por Voz y Aplauso)
+chcp 65001 > nul
+title MIK-JARVIS - INTERFAZ HOLOGRAFICA IRON MAN
 cd /d "%~dp0"
 echo =========================================================================
-echo   INICIANDO MIK-JARVIS: MODO IRON MAN
-echo   Activacion por Voz ("Hola Jarvis") o Aplauso
+echo   INICIANDO MIK-JARVIS: INTERFAZ HOLOGRAFICA ARC REACTOR (IRON MAN)
 echo   Powered by MIK Software
+echo   Abriendo en tu navegador predeterminado (http://localhost:5000)...
 echo =========================================================================
-uv run python modo_ironman.py
+uv run python servidor_ironman.py
 pause
