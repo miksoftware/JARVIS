@@ -1,34 +1,16 @@
-# Contributing to OpenJarvis
+# Contributing to MIK-JARVIS
 
-Thank you for your interest in contributing to OpenJarvis! This guide covers everything you need to know — from why to contribute, to how to submit your first pull request.
+Thank you for your interest in contributing to **MIK-JARVIS** by **MIK Software**! This guide covers our standards and how to submit improvements or extensions.
 
 ---
 
 ## Why Contribute?
 
-Contributing to OpenJarvis isn't just about code — it's about building the future of on-device AI together. Here's what you get:
-
-### Paper Acknowledgment
-
-All contributors with merged pull requests will be acknowledged as contributors on the OpenJarvis paper release.
-
-### Mac Mini Giveaway
-
-We're giving away a Mac Mini to one lucky contributor! Install OpenJarvis on your personal machine and opt in via the desktop app to share anonymized savings data (FLOPs, dollar cost, energy) for a chance to win. Your data is fully anonymous — no IP, no hardware info beyond savings metrics. You must share your email via the desktop app to be eligible.
-
-See the [Savings Leaderboard](https://open-jarvis.github.io/OpenJarvis/leaderboard/) for details.
-
-### Path to Maintainership
-
-Consistent contributors can grow into project maintainers:
-
-- **Contributor** — anyone with a merged PR
-- **Reviewer** — invited after 3+ merged PRs in a domain area, can review PRs
-- **Maintainer** — reviewers who demonstrate sustained engagement and good judgment
+Contributing to MIK-JARVIS helps build a modern, robust, and local-first AI assistant ecosystem for developer and enterprise productivity.
 
 ### Recognition
 
-Contributors are recognized in release notes and on our GitHub repository.
+All contributors are acknowledged in our project documentation and repository releases by MIK Software.
 
 ---
 
@@ -40,7 +22,7 @@ These are great starting points for new contributors:
 
 - Documentation improvements and typo fixes
 - Bug reports with reproducible steps
-- New eval datasets and scorers
+- Tool and channel enhancements
 - Test coverage improvements
 
 Look for issues labeled [`good-first-issue`](https://github.com/open-jarvis/OpenJarvis/labels/good-first-issue).
@@ -83,8 +65,8 @@ To avoid wasted effort, note that PRs in these categories are unlikely to be mer
 ### Setup
 
 ```bash
-git clone https://github.com/open-jarvis/OpenJarvis.git
-cd OpenJarvis
+git clone https://github.com/miksoftware/JARVIS.git
+cd JARVIS
 uv sync --extra dev
 ```
 
@@ -104,12 +86,8 @@ For detailed development setup, code conventions, and project structure, see the
 
 ## Claiming Issues
 
-1. Browse the [Roadmap](https://open-jarvis.github.io/OpenJarvis/development/roadmap/) for an item that interests you
-2. Check if a [GitHub issue](https://github.com/open-jarvis/OpenJarvis/issues) already exists for it — if not, [open one](https://github.com/open-jarvis/OpenJarvis/issues/new/choose) describing what you'd like to work on
-3. Comment **"take"** on the issue to get auto-assigned
-4. Fork, branch, and start working
-
-If you've claimed an issue but can't finish it, please leave a comment so someone else can pick it up.
+1. Check if an issue exists or open one at [Issues](https://github.com/miksoftware/JARVIS/issues) describing what you'd like to work on.
+2. Fork, branch, and start working.
 
 ---
 
@@ -121,12 +99,7 @@ For small fixes (typos, doc improvements, simple bug fixes), go ahead and open a
 
 ### Non-trivial Changes
 
-For larger changes — new features, refactors, new dependencies — **open an issue first** to discuss the approach. This saves everyone time by catching design issues early.
-
-Use the appropriate [issue template](https://github.com/open-jarvis/OpenJarvis/issues/new/choose):
-- **Bug Report** — for bugs with reproduction steps
-- **Feature Request** — for new functionality
-- **New Eval Dataset** — for contributing benchmarks
+For larger changes — new features, refactors, new dependencies — open an issue first to discuss the approach with MIK Software maintainers.
 
 ---
 
@@ -174,7 +147,7 @@ Keep the first line under 72 characters. Reference relevant issues (e.g., `fixes
 
 ## Contribution Areas
 
-OpenJarvis is built on five composable primitives. Here's where you can contribute:
+MIK-JARVIS is built on five composable primitives. Here's where you can contribute:
 
 | Area | What to Build | Guide |
 |---|---|---|
@@ -197,5 +170,5 @@ This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.
 
 ## Questions?
 
-- Open a [Discussion](https://github.com/open-jarvis/OpenJarvis/discussions) for questions and help
-- Check the [documentation](https://open-jarvis.github.io/OpenJarvis/) for guides and API reference
+- Open an issue or discussion on [GitHub](https://github.com/miksoftware/JARVIS)
+- Contact MIK Software at [contacto@miksoftwarecol.com](mailto:contacto@miksoftwarecol.com)

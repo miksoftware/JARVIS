@@ -1,38 +1,35 @@
 ---
 title: Downloads
-description: Download the OpenJarvis desktop app, browser app, CLI, or Python SDK
+description: Descarga la aplicación de escritorio MIK-JARVIS, interfaz web, CLI o SDK por MIK Software
 ---
 
 # Downloads
 
-OpenJarvis runs entirely on your hardware. Choose the interface that fits your workflow.
+MIK-JARVIS se ejecuta en tu propio hardware y se conecta a la infraestructura de MIK Software. Elige la interfaz que mejor se adapte a tu flujo de trabajo.
 
 ---
 
 ## Desktop App
 
-The desktop app is a native window for the OpenJarvis chat UI. All inference and backend
-processing happens on your local machine — the app connects to the backend you start locally.
+La aplicación de escritorio es una ventana nativa moderna para la interfaz de MIK-JARVIS. Todo el razonamiento y procesamiento se comunica de manera eficiente con tus modelos.
 
-!!! info "Backend required"
-    Start the backend before opening the desktop app. The quickstart script handles everything:
+!!! info "Inicio Rápido"
+    Inicia el asistente directamente:
     ```bash
-    git clone https://github.com/open-jarvis/OpenJarvis.git && cd OpenJarvis
-    ./scripts/quickstart.sh
+    git clone https://github.com/miksoftware/JARVIS.git && cd JARVIS
+    uv sync --extra desktop
     ```
 
-### Download
+### Descargas
 
-| Platform | Download | Notes |
+| Plataforma | Descarga | Notas |
 |----------|----------|-------|
-| macOS (Universal) | [:material-download: **OpenJarvis.dmg**](https://github.com/open-jarvis/OpenJarvis/releases/download/desktop-v1.0.2/OpenJarvis_1.0.1_universal.dmg) | Apple Silicon + Intel |
-| Windows (64-bit) | [:material-download: **OpenJarvis-setup.exe**](https://github.com/open-jarvis/OpenJarvis/releases/download/desktop-v1.0.2/OpenJarvis_1.0.1_x64-setup.exe) | Windows 10+ |
-| Linux (DEB) | [:material-download: **OpenJarvis.deb**](https://github.com/open-jarvis/OpenJarvis/releases/download/desktop-v1.0.2/OpenJarvis_1.0.1_amd64.deb) | Ubuntu, Debian |
-| Linux (RPM) | [:material-download: **OpenJarvis.rpm**](https://github.com/open-jarvis/OpenJarvis/releases/download/desktop-v1.0.2/OpenJarvis-1.0.1-1.x86_64.rpm) | Fedora, RHEL |
-| Linux (AppImage) | [:material-download: **OpenJarvis.AppImage**](https://github.com/open-jarvis/OpenJarvis/releases/download/desktop-v1.0.2/OpenJarvis_1.0.1_amd64.AppImage) | Any distro |
+| Windows (64-bit) | [:material-download: **MIK-JARVIS-setup.exe**](https://github.com/miksoftware/JARVIS/releases) | Windows 10/11 (64-bit) |
+| macOS (Universal) | [:material-download: **MIK-JARVIS.dmg**](https://github.com/miksoftware/JARVIS/releases) | Apple Silicon + Intel |
+| Linux (DEB) | [:material-download: **MIK-JARVIS.deb**](https://github.com/miksoftware/JARVIS/releases) | Ubuntu, Debian |
 
-!!! tip "All releases"
-    Browse all versions on the [GitHub Releases](https://github.com/open-jarvis/OpenJarvis/releases) page.
+!!! tip "Todas las versiones"
+    Explora todas las versiones en [GitHub Releases](https://github.com/miksoftware/JARVIS/releases).
 
 ### macOS: "app is damaged" fix
 

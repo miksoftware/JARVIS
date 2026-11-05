@@ -19,7 +19,7 @@ import {
 import { isTauri, checkHealth } from '../lib/api';
 
 const GITHUB_BASE =
-  'https://github.com/open-jarvis/OpenJarvis/releases/latest/download';
+  'https://github.com/miksoftware/JARVIS/releases/latest/download';
 
 interface Platform {
   id: string;
@@ -34,35 +34,35 @@ const PLATFORMS: Platform[] = [
     id: 'mac-arm',
     label: 'macOS (Apple Silicon)',
     shortLabel: 'macOS (Apple Silicon)',
-    file: 'OpenJarvis_aarch64.dmg',
+    file: 'MIK-JARVIS_aarch64.dmg',
     icon: Apple,
   },
   {
     id: 'mac-intel',
     label: 'macOS (Intel)',
     shortLabel: 'macOS (Intel)',
-    file: 'OpenJarvis_x64.dmg',
+    file: 'MIK-JARVIS_x64.dmg',
     icon: Apple,
   },
   {
     id: 'windows',
     label: 'Windows (64-bit)',
     shortLabel: 'Windows (64-bit)',
-    file: 'OpenJarvis_x64-setup.msi',
+    file: 'MIK-JARVIS_x64-setup.msi',
     icon: Monitor,
   },
   {
     id: 'linux-deb',
     label: 'Linux (DEB)',
     shortLabel: 'Linux (DEB)',
-    file: 'OpenJarvis_amd64.deb',
+    file: 'MIK-JARVIS_amd64.deb',
     icon: Terminal,
   },
   {
     id: 'linux-rpm',
     label: 'Linux (RPM)',
     shortLabel: 'Linux (RPM)',
-    file: 'OpenJarvis_x86_64.rpm',
+    file: 'MIK-JARVIS_x86_64.rpm',
     icon: Terminal,
   },
 ];
@@ -199,13 +199,13 @@ function HostedView() {
         <Sparkles size={32} />
       </div>
       <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--color-text)' }}>
-        OpenJarvis
+        MIK-JARVIS
       </h1>
       <p
         className="text-sm mb-6 leading-relaxed max-w-md mx-auto"
         style={{ color: 'var(--color-text-secondary)' }}
       >
-        Private AI that runs on your hardware. Chat, tools, agents, and
+        Private AI that runs on your hardware by MIK Software. Chat, tools, agents, and
         energy profiling &mdash; no cloud required.
       </p>
 
@@ -263,7 +263,7 @@ function DesktopView() {
           <Sparkles size={32} />
         </div>
         <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--color-text)' }}>
-          OpenJarvis Desktop
+          MIK-JARVIS Desktop
         </h1>
         <p
           className="text-sm mb-4 leading-relaxed max-w-md mx-auto"
@@ -336,13 +336,13 @@ function SelfHostedView() {
           <Sparkles size={32} />
         </div>
         <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--color-text)' }}>
-          OpenJarvis
+          MIK-JARVIS
         </h1>
         <p
           className="text-sm mb-4 leading-relaxed max-w-md mx-auto"
           style={{ color: 'var(--color-text-secondary)' }}
         >
-          Private AI that runs on your hardware. Chat, tools, agents, and
+          Private AI that runs on your hardware by MIK Software. Chat, tools, agents, and
           energy profiling &mdash; no cloud required.
         </p>
         <span
@@ -402,22 +402,22 @@ function SelfHostedView() {
 
       {/* CLI + Browser sections */}
       <div className="flex flex-col gap-3 mb-10">
-        <Section icon={Terminal} title="Command Line (macOS / Linux)" defaultOpen>
+        <Section icon={Terminal} title="Command Line (macOS / Linux / Windows)" defaultOpen>
           <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>
             Clone and install (Python 3.10+ required):
           </p>
-          <CodeBlock code={"git clone https://github.com/open-jarvis/OpenJarvis.git\ncd OpenJarvis\nuv sync"} />
+          <CodeBlock code={"git clone https://github.com/miksoftware/JARVIS.git\ncd JARVIS\nuv sync"} />
           <p className="text-xs mt-1" style={{ color: 'var(--color-text-secondary)' }}>
             Then get started:
           </p>
-          <CodeBlock code={"jarvis init\njarvis doctor\njarvis chat"} />
+          <CodeBlock code={"mik-jarvis init\nmik-jarvis doctor\nmik-jarvis chat"} />
         </Section>
 
         <Section icon={Globe} title="Browser App (Self-Hosted)">
           <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>
             Launch the API server to get the full UI in your browser:
           </p>
-          <CodeBlock code={"git clone https://github.com/open-jarvis/OpenJarvis.git\ncd OpenJarvis\nuv sync --extra desktop\njarvis serve --port 8000"} />
+          <CodeBlock code={"git clone https://github.com/miksoftware/JARVIS.git\ncd JARVIS\nuv sync --extra desktop\nmik-jarvis serve --port 8000"} />
           <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
             The chat, dashboard, energy profiling, and cost comparison all run
             locally on your machine.
@@ -428,7 +428,7 @@ function SelfHostedView() {
           <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>
             Deploy with Docker Compose for a zero-setup hosted instance:
           </p>
-          <CodeBlock code={"git clone https://github.com/open-jarvis/OpenJarvis.git\ncd OpenJarvis\ndocker compose -f deploy/docker/docker-compose.yml up -d"} />
+          <CodeBlock code={"git clone https://github.com/miksoftware/JARVIS.git\ncd JARVIS\ndocker compose -f deploy/docker/docker-compose.yml up -d"} />
           <p className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
             This starts both the API server and Ollama. The web UI is bundled and
             served automatically at port 8000.

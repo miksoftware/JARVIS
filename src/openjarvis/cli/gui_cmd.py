@@ -467,14 +467,14 @@ def gui(frontend_port: int, api_port: int, no_server: bool, no_browser: bool) ->
     """Start the browser-based graphical mode in the default browser.
 
     This command is intended for source checkouts. For an installed desktop
-    application, launch OpenJarvis from the operating system menu instead.
+    application, launch MIK-JARVIS from the operating system menu instead.
     """
     console = Console(stderr=True)
     frontend = _frontend_dir()
     if frontend is None:
         raise click.ClickException(
             "The graphical frontend is not available in this installation. "
-            "Download the OpenJarvis desktop app or run this command "
+            "Download the MIK-JARVIS desktop app or run this command "
             "from a source checkout."
         )
     npm = shutil.which("npm") or shutil.which("npm.cmd")
@@ -487,13 +487,13 @@ def gui(frontend_port: int, api_port: int, no_server: bool, no_browser: bool) ->
 
     # `jarvis start` exits non-zero when a daemon is already registered, so
     # without this a perfectly healthy API turned into the misleading "Could
-    # not start the OpenJarvis API server." Adopt it instead.
+    # not start the MIK-JARVIS API server." Adopt it instead.
     if not no_server and _api_healthy(api_port):
         if not _daemon_pid_alive(api_port, require_ready=True):
             raise click.ClickException(
                 f"API port {api_port} is already serving an unregistered service. "
                 "Stop it or choose another port. Use --no-server only when you "
-                "intend to use an externally managed OpenJarvis backend."
+                "intend to use an externally managed MIK-JARVIS backend."
             )
         console.print(
             f"[green]Reusing the API server already running on port {api_port}.[/green]"
@@ -523,7 +523,7 @@ def gui(frontend_port: int, api_port: int, no_server: bool, no_browser: bool) ->
             check=False,
         )
         if server.returncode != 0:
-            raise click.ClickException("Could not start the OpenJarvis API server.")
+            raise click.ClickException("Could not start the MIK-JARVIS API server.")
 
     env = os.environ.copy()
     # Let browser requests use Vite's same-origin proxy at any frontend port.

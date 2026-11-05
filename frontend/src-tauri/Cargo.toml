@@ -1,9 +1,10 @@
 [package]
-name = "openjarvis-desktop"
+name = "mik-jarvis-desktop"
 version = "1.0.1"
-description = "OpenJarvis Desktop — Native AI assistant with energy monitoring, trace debugging, and learning visualization"
+description = "MIK-JARVIS Desktop — Asistente de Inteligencia Artificial por MIK Software"
 edition = "2021"
-license = "MIT"
+license = "Apache-2.0"
+authors = ["MIK Software <contacto@miksoftwarecol.com>"]
 
 [build-dependencies]
 tauri-build = { version = "2", features = [] }

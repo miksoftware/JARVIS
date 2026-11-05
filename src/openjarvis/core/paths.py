@@ -56,7 +56,7 @@ def _find_source_root() -> Path | None:
                 content = py.read_text(encoding="utf-8")
             except OSError:
                 continue
-            if 'name = "openjarvis"' in content.lower():
+            if 'name = "mik-jarvis"' in content.lower() or 'name = "openjarvis"' in content.lower():
                 return candidate
     return None
 

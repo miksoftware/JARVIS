@@ -1,12 +1,12 @@
-site_name: OpenJarvis
-site_url: https://open-jarvis.github.io/OpenJarvis/
-site_description: Personal AI, On Personal Devices
-site_author: OpenJarvis Contributors
-repo_url: https://github.com/open-jarvis/OpenJarvis
-repo_name: open-jarvis/OpenJarvis
+site_name: MIK-JARVIS
+site_url: https://ai.miksoftwarecol.com/
+site_description: Asistente de Inteligencia Artificial Modular y Avanzado por MIK Software
+site_author: MIK Software
+repo_url: https://github.com/miksoftware/JARVIS
+repo_name: miksoftware/JARVIS
 edit_uri: edit/main/docs/
 
-copyright: Copyright &copy; 2026 OpenJarvis Contributors
+copyright: Copyright &copy; 2025-2026 MIK Software
 
 theme:
   name: material

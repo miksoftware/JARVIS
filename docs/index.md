@@ -1,6 +1,6 @@
 ---
-title: OpenJarvis
-description: Personal AI, On Personal Devices
+title: MIK-JARVIS
+description: Asistente Inteligente de IA y Copiloto Holográfico — MIK Software
 search:
   boost: 2
 hide:
@@ -10,29 +10,27 @@ hide:
 # Personal AI, On Personal Devices
 
 <p class="hero-tagline">
-OpenJarvis is a research framework for composable, on-device AI systems.
-Build personal AI that runs on your hardware. Cloud APIs are optional.
+MIK-JARVIS es un ecosistema integral y modular de Inteligencia Artificial desarrollado para MIK Software.
+Construye y ejecuta IA personal en tu propio hardware y conectado a FreeLLMAPI.
 </p>
 
 <div class="grid cards" markdown>
 
--   :material-image-multiple:{ .lg .middle } **See what people use it for**
+-   :material-image-multiple:{ .lg .middle } **Mira lo que puedes hacer**
 
     ---
 
-    A gallery of real setups — morning briefs that summarize your overnight Slack and email, a Discord companion that knows your calendar, a code reviewer that works at 30,000 feet. Outcome-first, with links to the docs that explain how to build each one.
+    Asistente con modos holográficos Iron Man HUD, resúmenes diarios, integración con voz ultrarrealista ElevenLabs, ejecución de código y conexión a modelos de alto rendimiento.
 
-    [:octicons-arrow-right-24: Browse the Showcase](showcase/index.md)
+    [:octicons-arrow-right-24: Ver Demostraciones](showcase/index.md)
 
 </div>
 
 ---
 
-## Why OpenJarvis?
+## ¿Por qué MIK-JARVIS?
 
-Personal AI agents are exploding in popularity, but nearly all of them still route intelligence through cloud APIs. Your "personal" AI continues to depend on someone else's server. At the same time, our [Intelligence Per Watt](https://www.intelligence-per-watt.ai/) research showed that local language models already handle 88.7% of single-turn chat and reasoning queries, with intelligence efficiency improving 5.3× from 2023 to 2025. The models and hardware are increasingly ready. What has been missing is the software stack to make local-first personal AI practical.
-
-OpenJarvis is that stack. It is a framework for local-first personal AI, built around three core ideas: shared primitives for building on-device agents; evaluations that treat energy, FLOPs, latency, and dollar cost as first-class constraints alongside accuracy; and a learning loop that improves models using local trace data. The goal is simple: make it possible to build personal AI agents that run locally by default, calling the cloud only when truly necessary. OpenJarvis aims to be both a research platform and a production foundation for local AI, in the spirit of PyTorch.
+MIK-JARVIS es la plataforma de IA de **MIK Software** pensada para dar autonomía, privacidad y velocidad. Integra interfaces futuristas estilo Iron Man con un backend de alto rendimiento conectado a modelos de vanguardia y síntesis de voz en español.
 
 ---
 
@@ -43,8 +41,8 @@ OpenJarvis is that stack. It is a framework for local-first personal AI, built a
     Run the full chat UI locally with one script:
 
     ```bash
-    git clone https://github.com/open-jarvis/OpenJarvis.git
-    cd OpenJarvis
+    git clone https://github.com/miksoftware/JARVIS.git
+    cd JARVIS
     ./scripts/quickstart.sh
     ```
 
@@ -53,28 +51,24 @@ OpenJarvis is that stack. It is a framework for local-first personal AI, built a
 
 === "Desktop App"
 
-    The desktop app is a native window for the OpenJarvis UI.
-    The backend (Ollama + inference) runs on your machine — start it first, then open the app.
+    The desktop app is a native window for the MIK-JARVIS UI.
+    The backend runs on your machine — start it first, then open the app.
 
     **Step 1.** Start the backend:
 
     ```bash
-    git clone https://github.com/open-jarvis/OpenJarvis.git
-    cd OpenJarvis
+    git clone https://github.com/miksoftware/JARVIS.git
+    cd JARVIS
     ./scripts/quickstart.sh
     ```
 
     **Step 2.** Download and open the desktop app:
 
-    [Download for macOS](https://github.com/open-jarvis/OpenJarvis/releases/download/desktop-v1.0.2/OpenJarvis_1.0.1_universal.dmg){ .md-button .md-button--primary }
+    [Download for Windows](https://github.com/miksoftware/JARVIS/releases){ .md-button .md-button--primary }
 
-    Also available for [Windows](https://github.com/open-jarvis/OpenJarvis/releases/download/desktop-v1.0.2/OpenJarvis_1.0.1_x64-setup.exe), [Linux (DEB)](https://github.com/open-jarvis/OpenJarvis/releases/download/desktop-v1.0.2/OpenJarvis_1.0.1_amd64.deb), and [Linux (RPM)](https://github.com/open-jarvis/OpenJarvis/releases/download/desktop-v1.0.2/OpenJarvis-1.0.1-1.x86_64.rpm). See the [Downloads](downloads.md) page for details.
+    Also available for macOS and Linux. See the [Downloads](downloads.md) page for details.
 
     The app connects to `http://localhost:8000` automatically.
-
-    !!! warning "macOS first launch"
-
-        Run `xattr -cr /Applications/OpenJarvis.app` if the app shows as "damaged".
 
 === "Python SDK"
 

@@ -1,4 +1,4 @@
-"""OpenJarvis — modular AI assistant backend with composable intelligence primitives."""
+"""MIK-JARVIS — Asistente de Inteligencia Artificial modular desarrollado por MIK Software."""
 
 from __future__ import annotations
 
@@ -10,9 +10,12 @@ if TYPE_CHECKING:
     from openjarvis.sdk import Jarvis, JarvisSystem, MemoryHandle, SystemBuilder
 
 try:
-    __version__ = _pkg_version("openjarvis")
+    __version__ = _pkg_version("mik-jarvis")
 except PackageNotFoundError:  # pragma: no cover — uninstalled source tree
-    __version__ = "0.0.0+unknown"
+    try:
+        __version__ = _pkg_version("openjarvis")
+    except PackageNotFoundError:
+        __version__ = "1.0.0"
 
 __all__ = ["Jarvis", "JarvisSystem", "MemoryHandle", "SystemBuilder", "__version__"]
 

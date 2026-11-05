@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MIK-JARVIS — Holographic Iron Man HUD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #030712;
+      --cyan-glow: #00f3ff;
+      --cyan-dim: rgba(0, 243, 255, 0.25);
+      --cyan-subtle: rgba(0, 243, 255, 0.08);
+      --gold-glow: #ffb703;
+      --gold-dim: rgba(255, 183, 3, 0.25);
+      --alert-red: #ff3366;
+      --text-main: #e2f1f8;
+      --text-dim: #7da5b8;
+      --glass-panel: rgba(5, 18, 32, 0.72);
+      --glass-border: rgba(0, 243, 255, 0.35);
+      --font-display: 'Orbitron', monospace;
+      --font-ui: 'Rajdhani', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-ui);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Fondo Holográfico y Cuadrícula */
+    #bg-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, transparent 30%, rgba(1, 4, 10, 0.85) 85%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .scanlines {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 243, 255, 0.02) 50%);
+      background-size: 100% 4px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* TOP BAR HUD */
+    header {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 28px;
+      border-bottom: 1px solid var(--glass-border);
+      background: linear-gradient(180deg, rgba(5, 20, 36, 0.85) 0%, rgba(3, 7, 18, 0.4) 100%);
+      backdrop-filter: blur(10px);
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--cyan-subtle);
+      border: 1px solid var(--cyan-glow);
+      padding: 5px 12px;
+      border-radius: 4px;
+      box-shadow: 0 0 12px var(--cyan-dim);
+    }
+
+    .logo-badge span {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 14px;
+      letter-spacing: 2px;
+      color: var(--cyan-glow);
+      text-shadow: 0 0 8px var(--cyan-glow);
+    }
+
+    .hud-title {
+      font-size: 13px;
+      letter-spacing: 3px;
+      color: var(--text-dim);
+      font-weight: 600;
+    }
+
+    .center-telemetry {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .telemetry-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      letter-spacing: 1.5px;
+      padding: 4px 12px;
+      background: rgba(0, 243, 255, 0.05);
+      border: 1px solid rgba(0, 243, 255, 0.2);
+      border-radius: 20px;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--cyan-glow);
+      box-shadow: 0 0 8px var(--cyan-glow);
+      animation: pulse-dot 1.8s infinite ease-in-out;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hud-btn {
+      background: rgba(0, 243, 255, 0.08);
+      border: 1px solid var(--glass-border);
+      color: var(--text-main);
+      font-family: var(--font-display);
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      padding: 7px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s ease;
+      box-shadow: 0 0 8px rgba(0, 243, 255, 0.1);
+    }
+
+    .hud-btn:hover {
+      background: rgba(0, 243, 255, 0.22);
+      border-color: var(--cyan-glow);
+      color: #fff;
+      box-shadow: 0 0 16px var(--cyan-glow);
+      transform: translateY(-1px);
+    }
+
+    .hud-btn.active {
+      background: rgba(0, 243, 255, 0.25);
+      border-color: var(--cyan-glow);
+      color: var(--cyan-glow);
+    }
+
+    /* MAIN COCKPIT VIEWPORT */
+    main {
+      position: relative;
+      z-index: 5;
+      flex: 1;
+      display: grid;
+      grid-template-columns: 320px 1fr 340px;
+      gap: 20px;
+      padding: 20px 28px;
+      height: calc(100vh - 65px);
+    }
+
+    /* PANELES LATERALES HUD */
+    .hud-panel {
+      background: var(--glass-panel);
+      border: 1px solid var(--glass-border);
+      border-radius: 8px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      backdrop-filter: blur(14px);
+      box-shadow: inset 0 0 25px rgba(0, 243, 255, 0.05), 0 8px 32px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hud-panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 10px;
+      height: 10px;
+      border-top: 2px solid var(--cyan-glow);
+      border-left: 2px solid var(--cyan-glow);
+    }
+
+    .hud-panel::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 10px;
+      height: 10px;
+      border-bottom: 2px solid var(--cyan-glow);
+      border-right: 2px solid var(--cyan-glow);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(0, 243, 255, 0.15);
+      padding-bottom: 8px;
+    }
+
+    .panel-title {
+      font-family: var(--font-display);
+      font-size: 12px;
+      letter-spacing: 2px;
+      color: var(--cyan-glow);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .data-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      padding: 5px 0;
+      border-bottom: 1px dashed rgba(0, 243, 255, 0.08);
+    }
+
+    .data-label {
+      color: var(--text-dim);
+      letter-spacing: 1px;
+    }
+
+    .data-val {
+      font-family: var(--font-display);
+      font-size: 12px;
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    .data-val.cyan { color: var(--cyan-glow); text-shadow: 0 0 6px var(--cyan-glow); }
+    .data-val.gold { color: var(--gold-glow); text-shadow: 0 0 6px var(--gold-glow); }
+
+    /* Canvas de Osciloscopio */
+    .scope-box {
+      background: rgba(0, 10, 20, 0.6);
+      border: 1px solid rgba(0, 243, 255, 0.2);
+      border-radius: 4px;
+      padding: 8px;
+      position: relative;
+    }
+
+    #scope-canvas {
+      width: 100%;
+      height: 85px;
+      display: block;
+    }
+
+    /* CENTRO: ARC REACTOR & NÚCLEO HOLOGRÁFICO */
+    .center-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .reactor-container {
+      position: relative;
+      width: 380px;
+      height: 380px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    /* Anillos Giratorios */
+    .ring {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .ring-outer-deg {
+      width: 370px;
+      height: 370px;
+      border: 1px dashed rgba(0, 243, 255, 0.35);
+      animation: rotate-cw 45s linear infinite;
+    }
+
+    .ring-segments {
+      width: 320px;
+      height: 320px;
+      border: 2px solid transparent;
+      border-top: 2px solid var(--cyan-glow);
+      border-bottom: 2px solid var(--cyan-glow);
+      box-shadow: 0 0 15px var(--cyan-dim);
+      animation: rotate-ccw 22s linear infinite;
+    }
+
+    .ring-ticks {
+      width: 270px;
+      height: 270px;
+      border: 1px dotted rgba(255, 183, 3, 0.5);
+      animation: rotate-cw 18s linear infinite;
+    }
+
+    .ring-pulse-wave {
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      border: 2px solid var(--cyan-glow);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .pulsing .ring-pulse-wave {
+      animation: wave-expand 1.6s ease-out infinite;
+    }
+
+    @keyframes wave-expand {
+      0% { transform: scale(0.9); opacity: 0.9; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+
+    /* Núcleo Central */
+    .reactor-core {
+      width: 190px;
+      height: 190px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #00f3ff 0%, #034b6e 45%, #051a2e 75%, #020712 100%);
+      box-shadow: 0 0 40px var(--cyan-glow), inset 0 0 35px #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 5;
+      transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .reactor-container:hover .reactor-core {
+      transform: scale(1.05);
+      box-shadow: 0 0 55px var(--cyan-glow), inset 0 0 45px #ffffff;
+    }
+
+    .reactor-core.listening {
+      background: radial-gradient(circle, #ffb703 0%, #a65800 45%, #2a1500 75%, #080300 100%);
+      box-shadow: 0 0 55px var(--gold-glow), inset 0 0 40px #fff7d6;
+    }
+
+    .reactor-core.thinking {
+      background: radial-gradient(circle, #8338ec 0%, #3a0ca3 45%, #16043d 75%, #050114 100%);
+      box-shadow: 0 0 55px #8338ec, inset 0 0 40px #e0aaff;
+    }
+
+    .reactor-icon {
+      font-size: 38px;
+      filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.6));
+    }
+
+    .core-status-text {
+      font-family: var(--font-display);
+      font-size: 11px;
+      letter-spacing: 2px;
+      font-weight: 800;
+      color: #030712;
+      background: rgba(255, 255, 255, 0.85);
+      padding: 3px 10px;
+      border-radius: 12px;
+      margin-top: 6px;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+    }
+
+    @keyframes rotate-cw {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes rotate-ccw {
+      from { transform: rotate(360deg); }
+      to { transform: rotate(0deg); }
+    }
+
+    /* Visualizador Radial de Audio alrededor del Núcleo */
+    #visualizer-canvas {
+      position: absolute;
+      width: 380px;
+      height: 380px;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    /* SUBTÍTULOS HOLOGRÁFICOS FLOTANTES */
+    .subtitle-stage {
+      margin-top: 25px;
+      width: 100%;
+      max-width: 680px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .user-spoken-tag {
+      font-size: 13px;
+      color: var(--gold-glow);
+      letter-spacing: 1.5px;
+      font-family: var(--font-display);
+      min-height: 20px;
+      text-shadow: 0 0 6px var(--gold-dim);
+    }
+
+    .ai-reply-box {
+      background: rgba(5, 18, 32, 0.75);
+      border: 1px solid var(--cyan-glow);
+      border-radius: 6px;
+      padding: 14px 22px;
+      font-size: 17px;
+      line-height: 1.5;
+      color: #ffffff;
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 25px rgba(0, 243, 255, 0.18), inset 0 0 15px rgba(0, 243, 255, 0.05);
+      backdrop-filter: blur(10px);
+      letter-spacing: 0.5px;
+    }
+
+    /* CONTROLES Y MODOS DE HABLA */
+    .controls-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .push-to-talk-btn {
+      background: linear-gradient(135deg, rgba(0, 243, 255, 0.2) 0%, rgba(0, 132, 255, 0.3) 100%);
+      border: 1px solid var(--cyan-glow);
+      color: #fff;
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      padding: 12px 28px;
+      border-radius: 30px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+      transition: all 0.2s ease;
+    }
+
+    .push-to-talk-btn:hover {
+      box-shadow: 0 0 35px var(--cyan-glow);
+      transform: scale(1.03);
+    }
+
+    .push-to-talk-btn:active, .push-to-talk-btn.pressing {
+      background: var(--gold-glow);
+      border-color: #fff;
+      color: #030712;
+      box-shadow: 0 0 40px var(--gold-glow);
+      transform: scale(0.97);
+    }
+
+    .mode-toggle-btn {
+      background: rgba(0, 243, 255, 0.05);
+      border: 1px solid rgba(0, 243, 255, 0.25);
+      color: var(--text-dim);
+      font-family: var(--font-ui);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      padding: 10px 18px;
+      border-radius: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .mode-toggle-btn.active {
+      border-color: var(--cyan-glow);
+      color: var(--cyan-glow);
+      background: rgba(0, 243, 255, 0.15);
+      box-shadow: 0 0 14px var(--cyan-dim);
+    }
+
+    /* HISTORIAL LATERAL FLOTANTE */
+    .history-drawer {
+      position: absolute;
+      top: 65px;
+      right: -380px;
+      width: 360px;
+      height: calc(100vh - 65px);
+      background: rgba(3, 10, 20, 0.95);
+      border-left: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px);
+      z-index: 50;
+      transition: right 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      box-shadow: -15px 0 35px rgba(0, 0, 0, 0.8);
+    }
+
+    .history-drawer.open {
+      right: 0;
+    }
+
+    .history-list {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 14px;
+      padding-right: 6px;
+    }
+
+    .history-list::-webkit-scrollbar {
+      width: 4px;
+    }
+    .history-list::-webkit-scrollbar-thumb {
+      background: rgba(0, 243, 255, 0.3);
+      border-radius: 4px;
+    }
+
+    .msg-bubble {
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .msg-bubble.user {
+      background: rgba(255, 183, 3, 0.12);
+      border-left: 3px solid var(--gold-glow);
+      align-self: flex-end;
+    }
+
+    .msg-bubble.jarvis {
+      background: rgba(0, 243, 255, 0.1);
+      border-left: 3px solid var(--cyan-glow);
+      align-self: flex-start;
+    }
+
+    /* MODAL CONFIGURACIÓN ELEVENLABS */
+    .modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(1, 4, 10, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal-card {
+      background: #061424;
+      border: 1px solid var(--cyan-glow);
+      box-shadow: 0 0 40px rgba(0, 243, 255, 0.35);
+      width: 460px;
+      border-radius: 8px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+    }
+
+    .modal-input {
+      background: rgba(0, 20, 35, 0.8);
+      border: 1px solid rgba(0, 243, 255, 0.4);
+      color: #fff;
+      font-family: var(--font-ui);
+      font-size: 14px;
+      padding: 10px 14px;
+      border-radius: 4px;
+      outline: none;
+    }
+    .modal-input:focus {
+      border-color: var(--cyan-glow);
+      box-shadow: 0 0 12px var(--cyan-glow);
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="bg-canvas"></canvas>
+  <div class="vignette"></div>
+  <div class="scanlines"></div>
+
+  <!-- TOP BAR -->
+  <header>
+    <div class="brand-group">
+      <div class="logo-badge">
+        <span>MIK-JARVIS</span>
+      </div>
+      <div class="hud-title">MARK-LXXXV // HOLOGRAPHIC INTERFACE</div>
+    </div>
+
+    <div class="center-telemetry">
+      <div class="telemetry-pill">
+        <div class="status-dot"></div>
+        <span id="system-status-text">SISTEMA EN LÍNEA // ENLACE NEURAL ACTIVO</span>
+      </div>
+      <div class="telemetry-pill">
+        <span style="color: var(--text-dim);">LATENCIA:</span>
+        <span id="latency-text" class="data-val cyan">14 ms</span>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button id="btn-toggle-history" class="hud-btn">
+        <span>📜 HISTORIAL</span>
+      </button>
+      <button id="btn-open-settings" class="hud-btn">
+        <span>⚙️ VOZ ELEVENLABS</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN HUD GRID -->
+  <main>
+    <!-- PANEL IZQUIERDO: TELEMETRÍA DE RED Y SISTEMA -->
+    <aside class="hud-panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span>❖ DIAGNÓSTICO MATRIZ</span>
+        </div>
+        <span style="font-size: 11px; color: var(--cyan-glow);">OK</span>
+      </div>
+
+      <div class="data-row">
+        <span class="data-label">PROTOCOLO IA</span>
+        <span class="data-val cyan">FreeLLMAPI</span>
+      </div>
+      <div class="data-row">
+        <span class="data-label">HOST REMOTO</span>
+        <span class="data-val" style="font-size: 10px;">ai.miksoftwarecol.com</span>
+      </div>
+      <div class="data-row">
+        <span class="data-label">NÚCLEO NEURAL</span>
+        <span class="data-val gold">GPT-4o Auto</span>
+      </div>
+      <div class="data-row">
+        <span class="data-label">INTEGRIDAD DEL NÚCLEO</span>
+        <span class="data-val cyan">100% NOMINAL</span>
+      </div>
+      <div class="data-row">
+        <span class="data-label">CANCELACIÓN DE ECO</span>
+        <span class="data-val cyan">ACTIVA (WebRTC)</span>
+      </div>
+      <div class="data-row">
+        <span class="data-label">RECONOCIMIENTO</span>
+        <span class="data-val cyan">Chromium Neural</span>
+      </div>
+
+      <div class="panel-header" style="margin-top: 10px;">
+        <div class="panel-title">
+          <span>〰 OSCILOSCOPIO ACÚSTICO</span>
+        </div>
+        <span id="mic-db-text" style="font-size: 11px; color: var(--gold-glow);">-48 dB</span>
+      </div>
+
+      <div class="scope-box">
+        <canvas id="scope-canvas"></canvas>
+      </div>
+      
+      <div style="font-size: 11px; color: var(--text-dim); line-height: 1.4;">
+        El filtro acústico por hardware suprime el ruido ambiente y evita que Jarvis se corte al respirar o dudar.
+      </div>
+    </aside>
+
+    <!-- CENTRO: ARC REACTOR INTERACTIVO -->
+    <section class="center-stage">
+      <div id="reactor" class="reactor-container" title="Haz clic o presiona [Espacio] para hablar">
+        <!-- Anillos Giratorios -->
+        <div class="ring ring-outer-deg"></div>
+        <div class="ring ring-segments"></div>
+        <div class="ring ring-ticks"></div>
+        <div class="ring-pulse-wave"></div>
+
+        <!-- Canvas Visualizador Circular -->
+        <canvas id="visualizer-canvas" width="380" height="380"></canvas>
+
+        <!-- Núcleo Central -->
+        <div id="reactor-core" class="reactor-core">
+          <div class="reactor-icon">🤖</div>
+          <div id="core-state-label" class="core-status-text">LISTO</div>
+        </div>
+      </div>
+
+      <!-- Subtítulos Holográficos -->
+      <div class="subtitle-stage">
+        <div id="user-caption" class="user-spoken-tag"></div>
+        <div id="ai-caption" class="ai-reply-box">
+          "A la orden, señor. ¿En qué podemos colaborar hoy para MIK Software?"
+        </div>
+      </div>
+
+      <!-- Controles de Modo -->
+      <div class="controls-bar">
+        <button id="btn-push-talk" class="push-to-talk-btn">
+          <span>🎙️ MANTÉN [ESPACIO] PARA HABLAR</span>
+        </button>
+
+        <button id="btn-hands-free" class="mode-toggle-btn">
+          <span>⚡ MODO MANOS LIBRES</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- PANEL DERECHO: VOZ & TELEMETRÍA VOCAL -->
+    <aside class="hud-panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span>❖ SÍNTESIS VOCAL HUD</span>
+        </div>
+        <span id="voice-indicator-badge" style="font-size: 11px; color: var(--gold-glow);">SERGIO AI</span>
+      </div>
+
+      <div class="data-row">
+        <span class="data-label">MOTOR DE VOZ</span>
+        <span id="voice-engine-name" class="data-val gold">ElevenLabs / Sergio</span>
+      </div>
+      <div class="data-row">
+        <span class="data-label">VOICE ID</span>
+        <span class="data-val cyan" style="font-size: 10px;">SHkfxEDcLXK31yPii5xM</span>
+      </div>
+      <div class="data-row">
+        <span class="data-label">TASA DE MUESTREO</span>
+        <span class="data-val">44.1 kHz Estéreo</span>
+      </div>
+      <div class="data-row">
+        <span class="data-label">MODO ACTUAL</span>
+        <span id="current-mode-label" class="data-val cyan">Push-To-Talk</span>
+      </div>
+
+      <div class="panel-header" style="margin-top: 10px;">
+        <div class="panel-title">
+          <span>⚙️ SINTONIZADOR VOCAL</span>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <label class="data-label" style="font-size: 12px;">VELOCIDAD DE CADENCIA</label>
+        <input id="rate-slider" type="range" min="0.8" max="1.3" step="0.05" value="1.0" style="accent-color: var(--cyan-glow);">
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
+        <label class="data-label" style="font-size: 12px;">VOLUMEN PRINCIPAL</label>
+        <input id="vol-slider" type="range" min="0" max="1" step="0.05" value="1.0" style="accent-color: var(--cyan-glow);">
+      </div>
+
+      <button id="btn-test-chime" class="hud-btn" style="margin-top: auto; justify-content: center;">
+        <span>🔊 PROBAR AUDIO & CHIME HUD</span>
+      </button>
+    </aside>
+  </main>
+
+  <!-- HISTORIAL DESLIZANTE -->
+  <div id="history-drawer" class="history-drawer">
+    <div class="panel-header">
+      <div class="panel-title">
+        <span>📜 REGISTRO DE CONVERSACIÓN</span>
+      </div>
+      <button id="btn-close-history" class="hud-btn" style="padding: 3px 8px;">✕</button>
+    </div>
+    <div id="history-list" class="history-list">
+      <div class="msg-bubble jarvis">
+        <strong>MIK-JARVIS:</strong> Bienvenido de nuevo, señor. Todos los sistemas de MIK Software están enlazados.
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL ELEVENLABS -->
+  <div id="settings-modal" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span>⚙️ CONFIGURACIÓN ELEVENLABS</span>
+        </div>
+        <button id="btn-close-modal" class="hud-btn" style="padding: 2px 8px;">✕</button>
+      </div>
+
+      <p style="font-size: 13px; color: var(--text-dim); line-height: 1.5;">
+        Introduce tu <strong style="color: var(--cyan-glow);">ELEVENLABS_API_KEY</strong> para activar la voz ultrarrealista y humana de <strong style="color: var(--gold-glow);">Sergio (SHkfxEDcLXK31yPii5xM)</strong>.
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <label class="data-label" style="font-size: 12px;">XI-API-KEY</label>
+        <input id="input-api-key" type="password" placeholder="xi-..." class="modal-input">
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <label class="data-label" style="font-size: 12px;">VOICE ID</label>
+        <input id="input-voice-id" type="text" value="SHkfxEDcLXK31yPii5xM" class="modal-input">
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
+        <button id="btn-save-key" class="push-to-talk-btn" style="padding: 8px 20px; font-size: 12px;">GUARDAR & ENLAZAR</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT LOGIC -->
+  <script>
+    // ESTADO DEL SISTEMA
+    const state = {
+      isListening: false,
+      isThinking: false,
+      isSpeaking: false,
+      mode: 'ptt', // 'ptt' (push-to-talk) | 'handsfree' (manos libres)
+      conversationHistory: [],
+      elevenlabsKey: localStorage.getItem('elevenlabs_key') || '',
+      voiceId: localStorage.getItem('elevenlabs_voice_id') || 'SHkfxEDcLXK31yPii5xM',
+      speechRate: 1.0,
+      speechVolume: 1.0
+    };
+
+    // ELEMENTOS DOM
+    const reactor = document.getElementById('reactor');
+    const reactorCore = document.getElementById('reactor-core');
+    const coreStateLabel = document.getElementById('core-state-label');
+    const userCaption = document.getElementById('user-caption');
+    const aiCaption = document.getElementById('ai-caption');
+    const btnPushTalk = document.getElementById('btn-push-talk');
+    const btnHandsFree = document.getElementById('btn-hands-free');
+    const btnToggleHistory = document.getElementById('btn-toggle-history');
+    const btnCloseHistory = document.getElementById('btn-close-history');
+    const historyDrawer = document.getElementById('history-drawer');
+    const historyList = document.getElementById('history-list');
+    const settingsModal = document.getElementById('settings-modal');
+    const btnOpenSettings = document.getElementById('btn-open-settings');
+    const btnCloseModal = document.getElementById('btn-close-modal');
+    const btnSaveKey = document.getElementById('btn-save-key');
+    const inputApiKey = document.getElementById('input-api-key');
+    const inputVoiceId = document.getElementById('input-voice-id');
+    const currentModeLabel = document.getElementById('current-mode-label');
+    const voiceEngineName = document.getElementById('voice-engine-name');
+    const btnTestChime = document.getElementById('btn-test-chime');
+
+    inputApiKey.value = state.elevenlabsKey;
+    inputVoiceId.value = state.voiceId;
+    updateVoiceBadge();
+
+    // Sincronizar estado de ElevenLabs con el servidor
+    fetch('/api/health')
+      .then(r => r.json())
+      .then(data => {
+        if (data.elevenlabs_configured) {
+          state.hasServerKey = true;
+          updateVoiceBadge(true);
+        }
+      })
+      .catch(() => {});
+
+    function updateVoiceBadge(forceActive = false) {
+      if (state.elevenlabsKey || forceActive || state.hasServerKey) {
+        voiceEngineName.textContent = 'ElevenLabs (Sergio AI)';
+        voiceEngineName.className = 'data-val gold';
+      } else {
+        voiceEngineName.textContent = 'Navegador Neural (Natural)';
+        voiceEngineName.className = 'data-val cyan';
+      }
+    }
+
+    // AUDIO CONTEXT & SFX PROCEDURALES ESTILO IRON MAN
+    let audioCtx = null;
+    const globalAudio = new Audio();
+    let mediaUnlocked = false;
+
+    function unlockMedia() {
+      if (mediaUnlocked) return;
+      mediaUnlocked = true;
+      getAudioContext();
+      globalAudio.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
+      globalAudio.play().catch(() => {});
+    }
+
+    window.addEventListener('pointerdown', unlockMedia);
+    window.addEventListener('keydown', unlockMedia);
+    window.addEventListener('click', unlockMedia);
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playIronManChime() {
+      unlockMedia();
+      const ctx = getAudioContext();
+      const now = ctx.currentTime;
+      
+      const osc1 = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc1.type = 'sine';
+      osc2.type = 'triangle';
+
+      osc1.frequency.setValueAtTime(880, now);
+      osc1.frequency.exponentialRampToValueAtTime(1480, now + 0.12);
+
+      osc2.frequency.setValueAtTime(1100, now);
+      osc2.frequency.exponentialRampToValueAtTime(1760, now + 0.15);
+
+      gain.gain.setValueAtTime(0.2, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+      osc1.connect(gain);
+      osc2.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc1.start(now);
+      osc2.start(now);
+      osc1.stop(now + 0.25);
+      osc2.stop(now + 0.25);
+    }
+
+    function playAckBeep() {
+      const ctx = getAudioContext();
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1760, now);
+      osc.frequency.exponentialRampToValueAtTime(1320, now + 0.08);
+
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.12);
+    }
+
+    btnTestChime.addEventListener('click', () => {
+      playIronManChime();
+      speak("Prueba de audio completada. Sistemas de MIK Software en estado nominal.");
+    });
+
+    // CANVASES Y VISUALIZADORES
+    const bgCanvas = document.getElementById('bg-canvas');
+    const bgCtx = bgCanvas.getContext('2d');
+    const scopeCanvas = document.getElementById('scope-canvas');
+    const scopeCtx = scopeCanvas.getContext('2d');
+    const visCanvas = document.getElementById('visualizer-canvas');
+    const visCtx = visCanvas.getContext('2d');
+
+    function resizeCanvases() {
+      bgCanvas.width = window.innerWidth;
+      bgCanvas.height = window.innerHeight;
+      scopeCanvas.width = scopeCanvas.parentElement.clientWidth;
+      scopeCanvas.height = 85;
+    }
+    window.addEventListener('resize', resizeCanvases);
+    resizeCanvases();
+
+    // Fondo de Partículas Holográficas
+    const particles = Array.from({ length: 60 }, () => ({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      size: Math.random() * 2 + 1
+    }));
+
+    function drawBackground() {
+      bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+      
+      // Cuadrícula sutil
+      bgCtx.strokeStyle = 'rgba(0, 243, 255, 0.03)';
+      bgCtx.lineWidth = 1;
+      const step = 50;
+      for (let x = 0; x < bgCanvas.width; x += step) {
+        bgCtx.beginPath();
+        bgCtx.moveTo(x, 0);
+        bgCtx.lineTo(x, bgCanvas.height);
+        bgCtx.stroke();
+      }
+      for (let y = 0; y < bgCanvas.height; y += step) {
+        bgCtx.beginPath();
+        bgCtx.moveTo(0, y);
+        bgCtx.lineTo(bgCanvas.width, y);
+        bgCtx.stroke();
+      }
+
+      // Partículas
+      bgCtx.fillStyle = 'rgba(0, 243, 255, 0.4)';
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0) p.x = bgCanvas.width;
+        if (p.x > bgCanvas.width) p.x = 0;
+        if (p.y < 0) p.y = bgCanvas.height;
+        if (p.y > bgCanvas.height) p.y = 0;
+
+        bgCtx.beginPath();
+        bgCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        bgCtx.fill();
+      });
+
+      requestAnimationFrame(drawBackground);
+    }
+    drawBackground();
+
+    // Osciloscopio y Visualizador Radial Reactivo
+    let audioLevel = 0;
+    let targetLevel = 0;
+
+    function renderAudioVisuals() {
+      // Suavizado del nivel
+      audioLevel += (targetLevel - audioLevel) * 0.2;
+
+      // 1. Osciloscopio lateral
+      scopeCtx.clearRect(0, 0, scopeCanvas.width, scopeCanvas.height);
+      scopeCtx.strokeStyle = state.isListening ? '#ffb703' : '#00f3ff';
+      scopeCtx.lineWidth = 2;
+      scopeCtx.beginPath();
+
+      const midY = scopeCanvas.height / 2;
+      const w = scopeCanvas.width;
+      const freq = state.isListening || state.isSpeaking ? 0.08 : 0.02;
+      const amp = (state.isListening || state.isSpeaking ? 25 : 6) * (audioLevel + 0.2);
+
+      for (let x = 0; x < w; x += 4) {
+        const y = midY + Math.sin(x * freq + performance.now() * 0.008) * amp;
+        if (x === 0) scopeCtx.moveTo(x, y);
+        else scopeCtx.lineTo(x, y);
+      }
+      scopeCtx.stroke();
+
+      // 2. Visualizador Radial en el Arc Reactor
+      visCtx.clearRect(0, 0, visCanvas.width, visCanvas.height);
+      const cx = visCanvas.width / 2;
+      const cy = visCanvas.height / 2;
+      const numBars = 48;
+      const baseRadius = 108;
+
+      for (let i = 0; i < numBars; i++) {
+        const angle = (i / numBars) * Math.PI * 2;
+        const wave = Math.sin(i * 0.5 + performance.now() * 0.006);
+        const barLen = Math.max(4, (audioLevel * 45) + (wave * 6));
+
+        const x1 = cx + Math.cos(angle) * baseRadius;
+        const y1 = cy + Math.sin(angle) * baseRadius;
+        const x2 = cx + Math.cos(angle) * (baseRadius + barLen);
+        const y2 = cy + Math.sin(angle) * (baseRadius + barLen);
+
+        visCtx.strokeStyle = state.isListening ? 'rgba(255, 183, 3, 0.8)' : 'rgba(0, 243, 255, 0.8)';
+        visCtx.lineWidth = 2.5;
+        visCtx.beginPath();
+        visCtx.moveTo(x1, y1);
+        visCtx.lineTo(x2, y2);
+        visCtx.stroke();
+      }
+
+      requestAnimationFrame(renderAudioVisuals);
+    }
+    renderAudioVisuals();
+
+    // RECONOCIMIENTO DE VOZ CHROMIUM CON CANCELACIÓN DE RUIDO
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+    let finalTranscript = '';
+
+    if (SpeechRecognition) {
+      recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'es-ES';
+
+      recognition.onstart = () => {
+        setReactorState('listening');
+        targetLevel = 0.8;
+      };
+
+      recognition.onresult = (event) => {
+        let interim = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
+          } else {
+            interim += event.results[i][0].transcript;
+          }
+        }
+
+        const currentText = finalTranscript || interim;
+        if (currentText.trim()) {
+          userCaption.textContent = `TÚ: "${currentText}"`;
+          targetLevel = 1.0;
+        }
+
+        // Si estamos en modo manos libres y hay pausa final
+        if (state.mode === 'handsfree' && finalTranscript.trim()) {
+          const query = finalTranscript.trim();
+          finalTranscript = '';
+          stopListening();
+          executeAIQuery(query);
+        }
+      };
+
+      recognition.onerror = (event) => {
+        console.warn('Reconocimiento:', event.error);
+        if (event.error !== 'no-speech') {
+          stopListening();
+        }
+      };
+
+      recognition.onend = () => {
+        targetLevel = 0.1;
+        if (state.isListening && state.mode === 'handsfree') {
+          // Reiniciar automáticamente en manos libres
+          try { recognition.start(); } catch(e){}
+        } else if (!state.isThinking && !state.isSpeaking) {
+          setReactorState('ready');
+        }
+      };
+    }
+
+    function startListening() {
+      if (!recognition) {
+        alert("Tu navegador no soporta SpeechRecognition. Usa Google Chrome o Microsoft Edge.");
+        return;
+      }
+      finalTranscript = '';
+      userCaption.textContent = 'ESCUCHANDO... (HABLA CON CLARIDAD)';
+      state.isListening = true;
+      playIronManChime();
+      try {
+        recognition.start();
+      } catch (e) {
+        console.log(e);
+      }
+    }
+
+    function stopListening() {
+      state.isListening = false;
+      if (recognition) {
+        try { recognition.stop(); } catch(e){}
+      }
+    }
+
+    // GESTIÓN DE ESTADOS DEL REACTOR
+    function setReactorState(st) {
+      reactorCore.className = 'reactor-core';
+      reactor.classList.remove('pulsing');
+
+      if (st === 'listening') {
+        reactorCore.classList.add('listening');
+        reactor.classList.add('pulsing');
+        coreStateLabel.textContent = 'ESCUCHANDO';
+      } else if (st === 'thinking') {
+        reactorCore.classList.add('thinking');
+        reactor.classList.add('pulsing');
+        coreStateLabel.textContent = 'PROCESANDO';
+      } else if (st === 'speaking') {
+        reactor.classList.add('pulsing');
+        coreStateLabel.textContent = 'HABLANDO';
+      } else {
+        coreStateLabel.textContent = 'LISTO';
+      }
+    }
+
+    // LLAMADA A BACKEND DE IA (FreeLLMAPI)
+    async function executeAIQuery(query) {
+      setReactorState('thinking');
+      state.isThinking = true;
+      targetLevel = 0.5;
+      aiCaption.textContent = 'Procesando en MIK Software FreeLLMAPI...';
+
+      // Añadir al registro
+      appendMessage('user', query);
+
+      const startTime = performance.now();
+
+      try {
+        const resp = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompt: query,
+            history: state.conversationHistory
+          })
+        });
+
+        const elapsed = Math.round(performance.now() - startTime);
+        document.getElementById('latency-text').textContent = `${elapsed} ms`;
+
+        if (!resp.ok) {
+          throw new Error(`HTTP ${resp.status}`);
+        }
+
+        const data = await resp.json();
+        const reply = data.reply || "Disculpe, señor. Hubo un detalle al procesar la respuesta.";
+
+        aiCaption.textContent = reply;
+        appendMessage('jarvis', reply);
+
+        state.isThinking = false;
+        speak(reply);
+
+      } catch (err) {
+        console.error(err);
+        const errMsg = "Señor, se presentó una anomalía en la conexión con FreeLLMAPI.";
+        aiCaption.textContent = errMsg;
+        state.isThinking = false;
+        speak(errMsg);
+      }
+    }
+
+    // SÍNTESIS DE VOZ (ElevenLabs Sergio / Web Speech API)
+    async function speak(text) {
+      setReactorState('speaking');
+      state.isSpeaking = true;
+      targetLevel = 0.9;
+      unlockMedia();
+
+      let playedAudio = false;
+
+      // 1. Llamar SIEMPRE a ElevenLabs en el backend (usa la clave guardada o en .env)
+      try {
+        const resp = await fetch('/api/tts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            text: text,
+            api_key: state.elevenlabsKey,
+            voice_id: state.voiceId
+          })
+        });
+
+        if (resp.ok) {
+          const blob = await resp.blob();
+          const audioUrl = URL.createObjectURL(blob);
+
+          globalAudio.pause();
+          globalAudio.src = audioUrl;
+          globalAudio.volume = state.speechVolume;
+
+          await new Promise((resolve, reject) => {
+            globalAudio.onended = () => {
+              state.isSpeaking = false;
+              setReactorState('ready');
+              targetLevel = 0.1;
+              if (state.mode === 'handsfree') {
+                setTimeout(startListening, 350);
+              }
+              resolve();
+            };
+            globalAudio.onerror = (e) => reject(e);
+
+            globalAudio.play().then(() => {
+              playedAudio = true;
+            }).catch((err) => {
+              console.warn("Autoplay bloqueó audio, reintentando...", err);
+              reject(err);
+            });
+          });
+
+          return;
+        } else {
+          console.warn("ElevenLabs devolvió código HTTP", resp.status);
+        }
+      } catch (e) {
+        console.warn("ElevenLabs no pudo reproducir en este turno, usando respaldo local:", e);
+      }
+
+      // 2. Respaldo: Web Speech API del navegador con voz en español natural
+      if (!playedAudio && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = 'es-ES';
+        utter.rate = state.speechRate;
+        utter.volume = state.speechVolume;
+
+        const voices = window.speechSynthesis.getVoices();
+        const spanishVoice = voices.find(v => 
+          v.lang.startsWith('es') && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Jorge') || v.name.includes('Sabina'))
+        ) || voices.find(v => v.lang.startsWith('es'));
+
+        if (spanishVoice) {
+          utter.voice = spanishVoice;
+        }
+
+        utter.onend = () => {
+          state.isSpeaking = false;
+          setReactorState('ready');
+          targetLevel = 0.1;
+          if (state.mode === 'handsfree') {
+            setTimeout(startListening, 350);
+          }
+        };
+
+        window.speechSynthesis.speak(utter);
+      } else if (!playedAudio) {
+        state.isSpeaking = false;
+        setReactorState('ready');
+      }
+    }
+
+    // GESTIÓN DE MENSAJES Y HISTORIAL
+    function appendMessage(role, text) {
+      state.conversationHistory.push({ role: role === 'user' ? 'user' : 'assistant', content: text });
+      if (state.conversationHistory.length > 12) {
+        state.conversationHistory.shift();
+      }
+
+      const bubble = document.createElement('div');
+      bubble.className = `msg-bubble ${role}`;
+      bubble.innerHTML = `<strong>${role === 'user' ? 'TÚ' : 'MIK-JARVIS'}:</strong> ${text}`;
+      historyList.appendChild(bubble);
+      historyList.scrollTop = historyList.scrollHeight;
+    }
+
+    // EVENTOS DE CONTROL (PUSH-TO-TALK Y TECLADO)
+    let isKeyDown = false;
+
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' && !isKeyDown && document.activeElement.tagName !== 'INPUT') {
+        e.preventDefault();
+        isKeyDown = true;
+        btnPushTalk.classList.add('pressing');
+        startListening();
+      }
+    });
+
+    window.addEventListener('keyup', (e) => {
+      if (e.code === 'Space' && isKeyDown && document.activeElement.tagName !== 'INPUT') {
+        e.preventDefault();
+        isKeyDown = false;
+        btnPushTalk.classList.remove('pressing');
+        stopListening();
+        
+        setTimeout(() => {
+          const query = (finalTranscript || userCaption.textContent.replace('TÚ: "', '').replace('"', '')).trim();
+          if (query && !query.includes('ESCUCHANDO')) {
+            executeAIQuery(query);
+          }
+        }, 200);
+      }
+    });
+
+    // Clic / Touch en Botón Push-To-Talk
+    btnPushTalk.addEventListener('mousedown', () => {
+      startListening();
+    });
+    btnPushTalk.addEventListener('mouseup', () => {
+      stopListening();
+      setTimeout(() => {
+        const query = (finalTranscript || userCaption.textContent.replace('TÚ: "', '').replace('"', '')).trim();
+        if (query && !query.includes('ESCUCHANDO')) {
+          executeAIQuery(query);
+        }
+      }, 200);
+    });
+
+    // Clic en el Reactor Central para activar
+    reactor.addEventListener('click', () => {
+      if (!state.isListening) {
+        startListening();
+      } else {
+        stopListening();
+        const query = (finalTranscript || userCaption.textContent.replace('TÚ: "', '').replace('"', '')).trim();
+        if (query && !query.includes('ESCUCHANDO')) {
+          executeAIQuery(query);
+        }
+      }
+    });
+
+    // Alternar Manos Libres
+    btnHandsFree.addEventListener('click', () => {
+      if (state.mode === 'ptt') {
+        state.mode = 'handsfree';
+        btnHandsFree.classList.add('active');
+        btnHandsFree.innerHTML = '<span>⚡ MANOS LIBRES ACTIVO</span>';
+        currentModeLabel.textContent = 'Manos Libres';
+        startListening();
+      } else {
+        state.mode = 'ptt';
+        btnHandsFree.classList.remove('active');
+        btnHandsFree.innerHTML = '<span>⚡ MODO MANOS LIBRES</span>';
+        currentModeLabel.textContent = 'Push-To-Talk';
+        stopListening();
+        setReactorState('ready');
+      }
+    });
+
+    // Drawer Historial
+    btnToggleHistory.addEventListener('click', () => historyDrawer.classList.toggle('open'));
+    btnCloseHistory.addEventListener('click', () => historyDrawer.classList.remove('open'));
+
+    // Modal Configuración ElevenLabs
+    btnOpenSettings.addEventListener('click', () => settingsModal.classList.add('show'));
+    btnCloseModal.addEventListener('click', () => settingsModal.classList.remove('show'));
+
+    btnSaveKey.addEventListener('click', async () => {
+      state.elevenlabsKey = inputApiKey.value.trim();
+      state.voiceId = inputVoiceId.value.trim() || 'SHkfxEDcLXK31yPii5xM';
+      localStorage.setItem('elevenlabs_key', state.elevenlabsKey);
+      localStorage.setItem('elevenlabs_voice_id', state.voiceId);
+      updateVoiceBadge();
+      settingsModal.classList.remove('show');
+      playIronManChime();
+
+      try {
+        await fetch('/api/save-elevenlabs-key', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            api_key: state.elevenlabsKey,
+            voice_id: state.voiceId
+          })
+        });
+      } catch (e) {
+        console.warn("No se pudo guardar en .env:", e);
+      }
+
+      speak("Configuración de ElevenLabs actualizada. Probando voz de Sergio.");
+    });
+
+    // Saludo de Entrada al Cargar
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        playIronManChime();
+      }, 600);
+    });
+  </script>
+</body>
+</html>
