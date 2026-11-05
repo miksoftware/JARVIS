@@ -1,9 +1,9 @@
-# Render Blueprint for the OpenJarvis FastAPI server.
+# Render Blueprint for the MIK-JARVIS FastAPI server.
 # Deploys src/openjarvis/server/app.py via deploy/docker/Dockerfile.
-# Apply at: https://dashboard.render.com/blueprint/new?repo=https://github.com/open-jarvis/OpenJarvis
+# Apply at: https://dashboard.render.com/blueprint/new?repo=https://github.com/miksoftware/JARVIS
 services:
   - type: web
-    name: openjarvis-server
+    name: mik-jarvis-server
     runtime: docker
     plan: free
     region: oregon

@@ -401,7 +401,7 @@ def doctor(as_json: bool) -> None:
 
     console = Console()
     console.print()
-    console.print("[bold]OpenJarvis Doctor[/bold]")
+    console.print("[bold]MIK-JARVIS Doctor[/bold]")
     console.print()
 
     table = Table(show_header=True, header_style="bold")

@@ -1,6 +1,6 @@
-# OpenJarvis PR Review Instructions
+# MIK-JARVIS PR Review Instructions
 
-You are reviewing pull requests for OpenJarvis, a local-first personal AI agent framework built with Python, Rust (PyO3), and TypeScript.
+You are reviewing pull requests for MIK-JARVIS, a local-first personal AI assistant framework developed by MIK Software built with Python, Rust (PyO3), and TypeScript.
 
 ## Review Checklist
 

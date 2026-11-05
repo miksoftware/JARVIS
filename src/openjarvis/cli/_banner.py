@@ -1,4 +1,4 @@
-"""Startup banner — OpenJarvis wordmark + tagline."""
+"""Startup banner — MIK-JARVIS wordmark + tagline."""
 
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ _TAGLINE = "MIK-JARVIS — Inteligencia Artificial por MIK Software"
 
 
 def print_banner(quiet: bool = False) -> None:
-    """Print the OpenJarvis startup banner. No-op when quiet."""
+    """Print the MIK-JARVIS startup banner. No-op when quiet."""
     if quiet:
         return
     try:

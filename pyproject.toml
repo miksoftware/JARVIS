@@ -208,14 +208,15 @@ docs = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/open-jarvis/OpenJarvis"
-Documentation = "https://open-jarvis.github.io/OpenJarvis/"
-Repository = "https://github.com/open-jarvis/OpenJarvis"
-Issues = "https://github.com/open-jarvis/OpenJarvis/issues"
+Homepage = "https://ai.miksoftwarecol.com"
+Documentation = "https://ai.miksoftwarecol.com/docs"
+Repository = "https://github.com/miksoftware/JARVIS"
+Issues = "https://github.com/miksoftware/JARVIS/issues"
 
 [project.scripts]
 mik-jarvis = "openjarvis.cli:main"
 jarvis = "openjarvis.cli:main"
+mik-jarvis-eval = "openjarvis.evals.cli:main"
 openjarvis-eval = "openjarvis.evals.cli:main"
 
 # Version is derived from git tags by hatch-vcs (see #526). For source/editable

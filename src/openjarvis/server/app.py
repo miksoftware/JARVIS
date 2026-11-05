@@ -247,9 +247,9 @@ def create_app(
     )
 
     app = FastAPI(
-        title="OpenJarvis API",
-        description="OpenAI-compatible API server for OpenJarvis",
-        version="0.1.0",
+        title="MIK-JARVIS API",
+        description="OpenAI-compatible API server for MIK-JARVIS by MIK Software",
+        version="1.0.0",
     )
 
     from fastapi.middleware.cors import CORSMiddleware

@@ -86,7 +86,7 @@ FREELLMAPI_API_KEY=tu_clave_secreta_freellmapi_aqui
 OPENAI_BASE_URL=https://ai.miksoftwarecol.com/v1
 OPENAI_API_KEY=tu_clave_secreta_freellmapi_aqui
 
-# Servidor OpenJarvis Estándar
+# Servidor Backend MIK-JARVIS
 OPENJARVIS_HOST=127.0.0.1
 OPENJARVIS_PORT=8000
 
@@ -126,7 +126,7 @@ El proyecto cuenta con **5 scripts ejecutables directos (`.bat`)** para iniciar 
 JARVIS/
 ├── iniciar-modo-ironman.bat          # 🌟 Interfaz Holográfica Arc Reactor (Web HUD)
 ├── iniciar-modo-ironman-consola.bat  # 🎙️ Modo Asistente de Voz por Consola (Wake Word)
-├── iniciar-gui.bat                   # 💻 Interfaz Gráfica Web React OpenJarvis
+├── iniciar-gui.bat                   # 💻 Interfaz Gráfica Web React MIK-JARVIS
 ├── iniciar-servidor.bat              # ⚙️ Servidor API Backend REST (Puerto 8000)
 └── iniciar-chat.bat                  # 💬 Chat interactivo en Terminal CLI
 ```
@@ -169,7 +169,7 @@ JARVIS/
 
 ---
 
-### 3. 💻 Interfaz Gráfica Web OpenJarvis (React)
+### 3. 💻 Interfaz Gráfica Web MIK-JARVIS (React)
 * **Doble clic en**: `iniciar-gui.bat`
 * **O por terminal**:
   ```powershell
